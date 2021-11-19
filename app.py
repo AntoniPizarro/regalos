@@ -20,14 +20,26 @@ def ping():
     '''
     return "Regalos API REST"
 
+# POST
+@app.route("/users/add", methods=["POST"])
+def get_my_presets():
+    data = request.get_json()
+    pprint(data)
+
+    if check_user_schema(data):
+        if db.add_document(HOST, DB, "users", data.copy()):
+            return jsonify(data)
+    return jsonify({"error" : "Algo ha ido mal"})
+
 @app.route("/users/add", methods=["POST"])
 def new_user():
     data = request.get_json()
     pprint(data)
 
     if check_user_schema(data):
-        db.add_document(HOST, DB, "users", data)
-    return jsonify(data)
+        if db.add_document(HOST, DB, "users", data.copy()):
+            return jsonify(data)
+    return jsonify({"error" : "Algo ha ido mal"})
 
 @app.route("/presents/add", methods=["POST"])
 def new_present():
@@ -35,8 +47,9 @@ def new_present():
     pprint(data)
 
     if check_present_schema(data):
-        db.add_document(HOST, DB, "presents", data)
-    return jsonify(data)
+        if db.add_document(HOST, DB, "presents", data):
+            return jsonify(data)
+    return jsonify({"error" : "Algo ha ido mal"})
 
 @app.route("/items/add", methods=["POST"])
 def new_item():
@@ -45,8 +58,8 @@ def new_item():
 
     if check_item_schema(data):
         if not db.get_data(HOST, DB, "presents", {"id" : data["id"]}):
-            db.add_document(HOST, DB, "presents", data)
-            return jsonify(data)
+            if db.add_document(HOST, DB, "presents", data):
+                return jsonify(data)
     return jsonify({"error" : "Algo ha ido mal"})
 
 if __name__ == "__main__":

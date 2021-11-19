@@ -19,7 +19,7 @@ def check_id(data_base, host, collection, chars, lenght):
     return id
 
 def check_user_schema(document):
-    allowed_keys = ["name", "surname", "phone", "email", "password", "image", "budget", "id"]
+    allowed_keys = ["name", "surname", "phone", "email", "password", "image", "budget"]
     if len(document) != len(allowed_keys):
         return False
     for key in document:
@@ -29,7 +29,7 @@ def check_user_schema(document):
     return True
 
 def check_present_schema(document):
-    allowed_keys = ["participants", "present_to", "items", "id"]
+    allowed_keys = ["participants", "present_to", "items"]
     if len(document) != len(allowed_keys):
         return False
     for key in document:
@@ -39,7 +39,7 @@ def check_present_schema(document):
     return True
 
 def check_item_schema(document):
-    allowed_keys = ["name", "description", "price", "image", "link", "id"]
+    allowed_keys = ["name", "description", "price", "image", "link"]
     if len(document) != len(allowed_keys):
         return False
     for key in document:
@@ -47,3 +47,16 @@ def check_item_schema(document):
             return False
             
     return True
+
+def my_presents(data_base, host, user):
+    presents = db.get_data(data_base, host, "presents")
+    res = []
+    for present in presents:
+        if user["id"] in present["participants"]:
+            res.append(present)
+    
+    return res
+
+def configure(data_base, host, user, settings):
+    user = db.get_data(data_base, host, "users", {'id' : user["id"]})
+    
