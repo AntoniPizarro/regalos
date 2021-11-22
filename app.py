@@ -1,13 +1,26 @@
 from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 from pprint import pprint
+import os
 
 from service.db import Data_Base as db
 from resources.funciones import *
 
-DB = "regalos"
-HOST = "mongodb+srv://m001-student:m001-mongodb-basics@sandbox.4uubd.mongodb.net/" + DB + "?retryWrites=true&w=majority"
-PORT = 5505
+'''
+Importamos los datos del archivo
+Si no existe, se crea y tiene que configurar
+'''
+try:
+    from settings import DB, HOST, PORT
+    print(f"Ajustes cargados:\n\tHOST: {HOST}\n\tDB: {DB}\n\tPORT: {PORT}")
+except:
+    settings = open("./settings.py", "w", encoding="utf-8")
+    settings.write("DB = \"\"" + os.linesep)
+    settings.write("HOST = \"\"" + os.linesep)
+    settings.write("PORT = 5500" + os.linesep)
+    settings.close()
+    from settings import DB, HOST, PORT
+    print(f"Ajustes cargados:\n\tHOST: {HOST}\n\tDB: {DB}\n\tPORT: {PORT}")
 
 app = Flask(__name__)
 CORS(app)
